@@ -4,6 +4,12 @@
 
 
 #include <QWidget>
+#include "NumberButton.h"
+
+
+
+#define NUMROWS	4
+#define NUMCOLS	4
 
 
 
@@ -13,11 +19,17 @@ class MainWindow : public QWidget
 	
 	public:
 	
-		explicit MainWindow(QWidget *parent = 0);
+		explicit MainWindow(QWidget *parent = NULL);
 
 	signals:
 
 	public slots:
+
+	protected:
+
+	private:
+
+		NumberButton *buttons[NUMROWS][NUMCOLS];
 
 };
 
