@@ -1,18 +1,19 @@
 #include <QtGui>
 
-#include "NumberButton.h"
+#include "GameButton.h"
 
 
 
-NumberButton::NumberButton(QWidget *parent) : QPushButton(parent)
+GameButton::GameButton(QWidget *parent) : QPushButton(parent)
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+	setFocusPolicy(Qt::NoFocus);
 	setEnabled(false);
 }
 
 
 
-void NumberButton::SetNumber(unsigned int power2)
+void GameButton::Set(unsigned int power2)
 {
 	QStringList backgroundColors = QStringList()
 		<< "#cdc0b4"	// 0 - empty
@@ -30,18 +31,18 @@ void NumberButton::SetNumber(unsigned int power2)
 	if (power2 == 0)
 	{
 		setText("");
-		setStyleSheet("background-color: " + backgroundColors[0]);
+		setStyleSheet("color: #303030; background-color: " + backgroundColors[0]);
 	}
 	else
 	{
 		setText(QString::number(1 << power2));
-		setStyleSheet("background-color: " + backgroundColors[qMin((unsigned int)11, power2)]);
+		setStyleSheet("color: #303030; background-color: " + backgroundColors[qMin((unsigned int)11, power2)]);
 	}
 }
 
 
 
-void NumberButton::resizeEvent(QResizeEvent *event)
+void GameButton::resizeEvent(QResizeEvent *event)
 {
 	int button_margin = style()->pixelMetric(QStyle::PM_ButtonMargin);
 	QFont f = font();

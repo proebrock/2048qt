@@ -3,5 +3,7 @@ TARGET = 2048qt
  
 QT = core gui
 
-HEADERS += MainWindow.h NumberButton.h
-SOURCES += MainWindow.cpp NumberButton.cpp main.cpp
+CONFIG += debug
+
+HEADERS += MainWindow.h GameButton.h Board.h
+SOURCES += MainWindow.cpp GameButton.cpp Board.cpp main.cpp

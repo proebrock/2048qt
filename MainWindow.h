@@ -4,12 +4,8 @@
 
 
 #include <QWidget>
-#include "NumberButton.h"
-
-
-
-#define NUMROWS	4
-#define NUMCOLS	4
+#include "GameButton.h"
+#include "Board.h"
 
 
 
@@ -20,6 +16,7 @@ class MainWindow : public QWidget
 	public:
 	
 		explicit MainWindow(QWidget *parent = NULL);
+		void Set(const Board &board);
 
 	signals:
 
@@ -29,9 +26,11 @@ class MainWindow : public QWidget
 
 	private:
 
-		NumberButton *buttons[NUMROWS][NUMCOLS];
+		GameButton *buttons[Board::NumFields];
 
 };
+
+
 
 #endif // _MAINWINDOW_H_
 

@@ -1,5 +1,7 @@
 #include <QGridLayout>
 
+
+
 #include "MainWindow.h"
 
 
@@ -16,13 +18,21 @@ MainWindow::MainWindow(QWidget *parent) :
 	layout->setSpacing(12);
 	setLayout(layout);
 
-	for (unsigned int r = 0; r < NUMROWS; r++)
+	for (unsigned int r = 0, i = 0; r < Board::NumRows; r++)
 	{
-		for (unsigned int c = 0; c < NUMCOLS; c++)
+		for (unsigned int c = 0; c < Board::NumCols; c++)
 		{
-			buttons[r][c] = new NumberButton();
-			buttons[r][c]->SetNumber(4*r+c);
-			layout->addWidget(buttons[r][c], r, c);
+			buttons[i] = new GameButton();
+			layout->addWidget(buttons[i], r, c);
+			i++;
 		}
 	}
+}
+
+
+
+void MainWindow::Set(const Board &board)
+{
+	for (unsigned int i = 0; i < Board::NumFields; i++)
+		buttons[Board::NumFields - i - 1]->Set(board[i]);
 }
