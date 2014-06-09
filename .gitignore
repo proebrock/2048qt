@@ -1,0 +1,4 @@
+2048qt
+Makefile
+*.o
+moc_*.cpp
