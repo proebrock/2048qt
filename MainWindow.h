@@ -4,8 +4,7 @@
 
 
 #include <QWidget>
-#include "GameButton.h"
-#include "Board.h"
+#include "GameButtonGrid.h"
 
 
 
@@ -26,7 +25,7 @@ class MainWindow : public QWidget
 
 	private:
 
-		GameButton *buttons[Board::NumFields];
+		GameButtonGrid *grid;
 
 };
 

@@ -5,5 +5,6 @@ QT = core gui
 
 CONFIG += debug
 
-HEADERS += MainWindow.h GameButton.h Board.h
-SOURCES += MainWindow.cpp GameButton.cpp Board.cpp main.cpp
+HEADERS += MainWindow.h GameButtonGrid.h GameButton.h Board.h
+SOURCES += MainWindow.cpp GameButtonGrid.cpp GameButton.cpp \
+	Board.cpp main.cpp

@@ -6,7 +6,6 @@
 
 GameButton::GameButton(QWidget *parent) : QPushButton(parent)
 {
-	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	setFocusPolicy(Qt::NoFocus);
 	setEnabled(false);
 }
