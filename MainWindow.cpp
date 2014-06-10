@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	grid = new GameButtonGrid(this);
 	grid->setSizePolicy(QSizePolicy::Expanding,
 		QSizePolicy::Expanding);
+	grid->setFocus();
 	layout->addWidget(grid);
 	setLayout(layout);
 }

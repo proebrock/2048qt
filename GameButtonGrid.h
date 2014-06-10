@@ -23,6 +23,8 @@ class GameButtonGrid : public QWidget
 	public slots:
 
 	protected:
+	
+		virtual void keyPressEvent(QKeyEvent *event);
 
 	private:
 
