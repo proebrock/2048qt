@@ -6,7 +6,9 @@ int main(int argc, char **argv)
 	QApplication app(argc, argv);
 
 	MainWindow window;
-	window.Set(Board(0x0123456789abcdef));
+	Board board(0x0123456789abcdef);
+	board.Transpose();
+	window.Set(board);
 	window.show();
 
 	return app.exec();

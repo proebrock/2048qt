@@ -26,6 +26,18 @@ class Board
 			return (mask >> (BitsPerField * index)) & FieldMask;
 		}
 
+		inline void Transpose()
+		{
+			mask =
+				((mask & 0xf0000f0000f0000f) |
+				((mask & 0x0000f0000f0000f0) << 3*BitsPerField) |
+				((mask & 0x00000000f0000f00) << 6*BitsPerField) |
+				((mask & 0x000000000000f000) << 9*BitsPerField) |
+				((mask & 0x0f0000f0000f0000) >> 3*BitsPerField) |
+				((mask & 0x00f0000f00000000) >> 6*BitsPerField) |
+				((mask & 0x000f000000000000) >> 9*BitsPerField));
+		}
+
 	private:
 
 		 board_t mask;
