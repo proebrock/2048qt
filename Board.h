@@ -11,15 +11,19 @@ class Board
 {
 	public:
 
-		typedef unsigned long long board_t;
-
-		Board(board_t mask);
-
-		static const unsigned int NumRows = 4;
-		static const unsigned int NumCols = 4;
-		static const unsigned int NumFields = NumRows * NumCols;
+		typedef unsigned short row_t;		// 2 bytes = 16 bit
+		typedef unsigned long long board_t;	// 8 bytes = 64 bit
 		static const unsigned int BitsPerField = 4;
 		static const unsigned int FieldMask = ((1 << BitsPerField) - 1);
+		static const unsigned int BitsPerRow = 8 * sizeof(row_t);
+		static const unsigned int RowMask = ((1 << BitsPerRow) - 1);
+
+		static const unsigned int NumRows = sizeof(board_t) / sizeof(row_t);
+		static const unsigned int NumCols = (8 * sizeof(row_t)) / BitsPerField;
+		static const unsigned int NumFields = NumRows * NumCols;
+
+		Board(board_t mask);
+		~Board();
 
 		inline unsigned int operator[](unsigned int index) const
 		{
@@ -40,7 +44,11 @@ class Board
 
 	private:
 
-		 board_t mask;
+		board_t mask;
+
+		// Lookup tables implemented as singleton
+		static row_t *lookupTableLeft;
+		static row_t *lookupTableRight;
 };
 
 

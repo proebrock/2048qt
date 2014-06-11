@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 
 	MainWindow window;
 	Board board(0x0123456789abcdef);
-	board.Transpose();
+	//board.Transpose();
 	window.Set(board);
 	window.show();
 
