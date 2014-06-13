@@ -22,10 +22,3 @@ MainWindow::MainWindow(QWidget *parent) :
 	layout->addWidget(grid);
 	setLayout(layout);
 }
-
-
-
-void MainWindow::Set(const Board &board)
-{
-	grid->Set(board);
-}

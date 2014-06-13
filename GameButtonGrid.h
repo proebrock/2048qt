@@ -16,7 +16,7 @@ class GameButtonGrid : public QWidget
 	public:
 	
 		explicit GameButtonGrid(QWidget *parent = NULL);
-		void Set(const Board &board);
+		void DisplayBoard();
 
 	signals:
 
@@ -28,6 +28,7 @@ class GameButtonGrid : public QWidget
 
 	private:
 
+		Board board;
 		GameButton *buttons[Board::NumFields];
 
 };

@@ -15,7 +15,6 @@ class MainWindow : public QWidget
 	public:
 	
 		explicit MainWindow(QWidget *parent = NULL);
-		void Set(const Board &board);
 
 	signals:
 

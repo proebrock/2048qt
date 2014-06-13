@@ -3,7 +3,7 @@
 
 
 
-#define GETFIELD(mask, number)	((mask << number) & FIELDMASK)
+#include <stdlib.h>
 
 
 
@@ -17,40 +17,38 @@ class Board
 		static const unsigned int FieldMask = ((1 << BitsPerField) - 1);
 		static const unsigned int BitsPerRow = 8 * sizeof(row_t);
 		static const unsigned int RowMask = ((1 << BitsPerRow) - 1);
-
 		static const unsigned int NumRows = sizeof(board_t) / sizeof(row_t);
 		static const unsigned int NumCols = (8 * sizeof(row_t)) / BitsPerField;
 		static const unsigned int NumFields = NumRows * NumCols;
 
+		Board();
 		Board(board_t mask);
 		~Board();
 
-		inline unsigned int operator[](unsigned int index) const
-		{
-			return (mask >> (BitsPerField * index)) & FieldMask;
-		}
+		unsigned int GetField(unsigned int index) const;
+		void SetField(unsigned int index, unsigned int value);
+		row_t GetRow(unsigned int index) const;
+		void SetRow(unsigned int index, row_t value);
 
-		inline void Transpose()
-		{
-			mask =
-				((mask & 0xf0000f0000f0000f) |
-				((mask & 0x0000f0000f0000f0) << 3*BitsPerField) |
-				((mask & 0x00000000f0000f00) << 6*BitsPerField) |
-				((mask & 0x000000000000f000) << 9*BitsPerField) |
-				((mask & 0x0f0000f0000f0000) >> 3*BitsPerField) |
-				((mask & 0x00f0000f00000000) >> 6*BitsPerField) |
-				((mask & 0x000f000000000000) >> 9*BitsPerField));
-		}
+		void Transpose();
+		bool Left();
+		bool Up();
+		bool Right();
+		bool Down();
+
+		unsigned int NumEmptyFields() const;
+		unsigned int GetEmptyFields(unsigned int *fieldIndices) const;
+		bool AddRandom();
 
 	private:
 
-		board_t mask;
+		volatile board_t mask;
 
 		// Lookup tables implemented as singleton
 		static row_t *lookupTableLeft;
 		static row_t *lookupTableRight;
 
-		Board::row_t MoveRight(Board::row_t value);
+		Board::row_t MoveRow(Board::row_t value, bool moveRight);
 };
 
 

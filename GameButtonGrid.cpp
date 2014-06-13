@@ -2,7 +2,6 @@
 
 
 
-#include <QDebug>
 #include <QtGui>
 #include "GameButtonGrid.h"
 
@@ -28,14 +27,19 @@ GameButtonGrid::GameButtonGrid(QWidget *parent) :
 			i++;
 		}
 	}
+
+	// Prepare board
+	board.AddRandom();
+	board.AddRandom();
+	DisplayBoard();
 }
 
 
 
-void GameButtonGrid::Set(const Board &board)
+void GameButtonGrid::DisplayBoard()
 {
 	for (unsigned int i = 0; i < Board::NumFields; i++)
-		buttons[Board::NumFields - i - 1]->Set(board[i]);
+		buttons[Board::NumFields - i - 1]->Set(board.GetField(i));
 }
 
 
@@ -45,19 +49,35 @@ void GameButtonGrid::keyPressEvent(QKeyEvent *event)
 	switch (event->key())
 	{
 		case Qt::Key_Left:
-			qDebug() << "Key_Left";
+			if (board.Left())
+			{
+				board.AddRandom();
+				DisplayBoard();
+			}
 			event->accept();
 			break;
 		case Qt::Key_Up:
-			qDebug() << "Key_Up";
+			if (board.Up())
+			{
+				board.AddRandom();
+				DisplayBoard();
+			}
 			event->accept();
 			break;
 		case Qt::Key_Right:
-			qDebug() << "Key_Right";
+			if (board.Right())
+			{
+				board.AddRandom();
+				DisplayBoard();
+			}
 			event->accept();
 			break;
 		case Qt::Key_Down:
-			qDebug() << "Key_Down";
+			if (board.Down())
+			{
+				board.AddRandom();
+				DisplayBoard();
+			}
 			event->accept();
 			break;
 		default:
