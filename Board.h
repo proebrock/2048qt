@@ -49,6 +49,8 @@ class Board
 		// Lookup tables implemented as singleton
 		static row_t *lookupTableLeft;
 		static row_t *lookupTableRight;
+
+		Board::row_t MoveRight(Board::row_t value);
 };
 
 
