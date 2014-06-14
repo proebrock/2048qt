@@ -45,6 +45,6 @@ void GameButton::resizeEvent(QResizeEvent *event)
 {
 	int button_margin = style()->pixelMetric(QStyle::PM_ButtonMargin);
 	QFont f = font();
-	f.setPixelSize((event->size().height() - button_margin * 2)/3);
+	f.setPixelSize((event->size().height() - button_margin * 2)/2);
 	setFont(f);
 }
