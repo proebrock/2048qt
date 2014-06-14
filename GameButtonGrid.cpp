@@ -28,10 +28,51 @@ GameButtonGrid::GameButtonGrid(QWidget *parent) :
 		}
 	}
 
-	// Prepare board
+	NewGame();
+}
+
+
+
+void GameButtonGrid::NewGame()
+{
+	totalScore = 0;
 	board.AddRandom();
 	board.AddRandom();
 	DisplayBoard();
+}
+
+
+
+void GameButtonGrid::keyPressEvent(QKeyEvent *event)
+{
+	int score = 0;
+	switch (event->key())
+	{
+		case Qt::Key_Left:
+			score = board.Left();
+			event->accept();
+			break;
+		case Qt::Key_Up:
+			score = board.Up();
+			event->accept();
+			break;
+		case Qt::Key_Right:
+			score = board.Right();
+			event->accept();
+			break;
+		case Qt::Key_Down:
+			score = board.Down();
+			event->accept();
+			break;
+		default:
+			QWidget::keyPressEvent(event);
+	}
+	if (score >= 0)
+	{
+		totalScore += score;
+		board.AddRandom();
+		DisplayBoard();
+	}
 }
 
 
@@ -40,47 +81,4 @@ void GameButtonGrid::DisplayBoard()
 {
 	for (unsigned int i = 0; i < Board::NumFields; i++)
 		buttons[Board::NumFields - i - 1]->Set(board.GetField(i));
-}
-
-
-
-void GameButtonGrid::keyPressEvent(QKeyEvent *event)
-{
-	switch (event->key())
-	{
-		case Qt::Key_Left:
-			if (board.Left())
-			{
-				board.AddRandom();
-				DisplayBoard();
-			}
-			event->accept();
-			break;
-		case Qt::Key_Up:
-			if (board.Up())
-			{
-				board.AddRandom();
-				DisplayBoard();
-			}
-			event->accept();
-			break;
-		case Qt::Key_Right:
-			if (board.Right())
-			{
-				board.AddRandom();
-				DisplayBoard();
-			}
-			event->accept();
-			break;
-		case Qt::Key_Down:
-			if (board.Down())
-			{
-				board.AddRandom();
-				DisplayBoard();
-			}
-			event->accept();
-			break;
-		default:
-			QWidget::keyPressEvent(event);
-	}
 }

@@ -31,10 +31,10 @@ class Board
 		void SetRow(unsigned int index, row_t value);
 
 		void Transpose();
-		bool Left();
-		bool Up();
-		bool Right();
-		bool Down();
+		int Left();
+		int Up();
+		int Right();
+		int Down();
 
 		unsigned int NumEmptyFields() const;
 		unsigned int GetEmptyFields(unsigned int *fieldIndices) const;
@@ -47,8 +47,9 @@ class Board
 		// Lookup tables implemented as singleton
 		static row_t *lookupTableLeft;
 		static row_t *lookupTableRight;
+		static int *scores;
 
-		Board::row_t MoveRow(Board::row_t value, bool moveRight);
+		Board::row_t MoveRow(Board::row_t value, bool moveRight, int *score);
 };
 
 

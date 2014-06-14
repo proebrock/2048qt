@@ -4,6 +4,7 @@
 
 Board::row_t *Board::lookupTableLeft = (Board::row_t *)0;
 Board::row_t *Board::lookupTableRight = (Board::row_t *)0;
+int *Board::scores = (int *)0;
 
 
 
@@ -15,19 +16,18 @@ Board::Board() : Board(0)
 
 Board::Board(board_t mask)
 {
+	unsigned int n = 1 << BitsPerRow;
 	this->mask = mask;
 
 	if (lookupTableLeft == (Board::row_t *)0)
 	{
-		lookupTableLeft = new row_t[1 << BitsPerRow];
-		for (unsigned int i = 0; i < (1 << BitsPerRow); i++)
-			lookupTableLeft[i] = MoveRow((Board::row_t)i, false);
-	}
-	if (lookupTableRight == (Board::row_t *)0)
-	{
-		lookupTableRight = new row_t[1 << BitsPerRow];
-		for (unsigned int i = 0; i < (1 << BitsPerRow); i++)
-			lookupTableRight[i] = MoveRow((Board::row_t)i, true);
+		lookupTableLeft = new row_t[n];
+		scores = new int[n];
+		for (unsigned int i = 0; i < n; i++)
+			lookupTableLeft[i] = MoveRow((Board::row_t)i, false, &(scores[i]));
+		lookupTableRight = new row_t[n];
+		for (unsigned int i = 0; i < n; i++)
+			lookupTableRight[i] = MoveRow((Board::row_t)i, true, (int *)0);
 	}
 }
 
@@ -90,46 +90,78 @@ void Board::Transpose()
 
 
 
-bool Board::Left()
+int Board::Left()
 {
 	board_t oldmask = mask;
+	int totalScore = 0;
 	for (unsigned int i = 0; i < NumRows; i++)
-		SetRow(i, lookupTableLeft[GetRow(i)]);
-	return oldmask != mask;
+	{
+		row_t row = GetRow(i);
+		SetRow(i, lookupTableLeft[row]);
+		totalScore += scores[row];
+	}
+	if (oldmask == mask)
+		return -1;
+	else
+		return totalScore;
 }
 
 
 
-bool Board::Up()
+int Board::Up()
 {
 	board_t oldmask = mask;
+	int totalScore = 0;
 	Transpose();
 	for (unsigned int i = 0; i < NumRows; i++)
-		SetRow(i, lookupTableLeft[GetRow(i)]);
+	{
+		row_t row = GetRow(i);
+		SetRow(i, lookupTableLeft[row]);
+		totalScore += scores[row];
+	}
 	Transpose();
-	return oldmask != mask;
+	if (oldmask == mask)
+		return -1;
+	else
+		return totalScore;
 }
 
 
 
-bool Board::Right()
+int Board::Right()
 {
 	board_t oldmask = mask;
+	int totalScore = 0;
 	for (unsigned int i = 0; i < NumRows; i++)
-		SetRow(i, lookupTableRight[GetRow(i)]);
-	return oldmask != mask;
+	{
+		row_t row = GetRow(i);
+		SetRow(i, lookupTableRight[row]);
+		totalScore += scores[row];
+	}
+	if (oldmask == mask)
+		return -1;
+	else
+		return totalScore;
 }
 
 
 
-bool Board::Down()
+int Board::Down()
 {
 	board_t oldmask = mask;
+	int totalScore = 0;
 	Transpose();
 	for (unsigned int i = 0; i < NumRows; i++)
-		SetRow(i, lookupTableRight[GetRow(i)]);
+	{
+		row_t row = GetRow(i);
+		SetRow(i, lookupTableRight[row]);
+		totalScore += scores[row];
+	}
 	Transpose();
-	return oldmask != mask;
+	if (oldmask == mask)
+		return -1;
+	else
+		return totalScore;
 }
 
 
@@ -168,8 +200,11 @@ bool Board::AddRandom()
 
 
 
-Board::row_t Board::MoveRow(Board::row_t value, bool moveRight)
+Board::row_t Board::MoveRow(Board::row_t value, bool moveRight, int *score)
 {
+	// Initialize score
+	if (score != (int *)0)
+		*score = 0;
 	// Move values from bit field into array for easier access
 	unsigned int input[NumCols];
 	unsigned int in = 0;
@@ -205,6 +240,9 @@ Board::row_t Board::MoveRow(Board::row_t value, bool moveRight)
 			output[out-1]++;
 			combinePossible = false;
 			in++;
+			// Update score
+			if (score != (int *)0)
+				*score += 1 << output[out-1];
 		}
 		else
 		{

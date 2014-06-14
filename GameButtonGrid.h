@@ -16,8 +16,8 @@ class GameButtonGrid : public QWidget
 	public:
 	
 		explicit GameButtonGrid(QWidget *parent = NULL);
-		void DisplayBoard();
-
+		void NewGame();
+		
 	signals:
 
 	public slots:
@@ -28,9 +28,11 @@ class GameButtonGrid : public QWidget
 
 	private:
 
+		void DisplayBoard();
+
+		int totalScore;
 		Board board;
 		GameButton *buttons[Board::NumFields];
-
 };
 
 
