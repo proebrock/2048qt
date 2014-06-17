@@ -1,9 +1,8 @@
-#include <QGridLayout>
-
-
-
-#include <QtGui>
 #include "GameButtonGrid.h"
+
+
+
+#include <QGridLayout>
 
 
 
@@ -36,6 +35,7 @@ GameButtonGrid::GameButtonGrid(QWidget *parent) :
 void GameButtonGrid::NewGame()
 {
 	totalScore = 0;
+	board.Clear();
 	board.AddRandom();
 	board.AddRandom();
 	DisplayBoard();
@@ -43,36 +43,22 @@ void GameButtonGrid::NewGame()
 
 
 
-void GameButtonGrid::keyPressEvent(QKeyEvent *event)
+void GameButtonGrid::ApplyMove(Board::Move move)
 {
-	int score = 0;
-	switch (event->key())
-	{
-		case Qt::Key_Left:
-			score = board.Left();
-			event->accept();
-			break;
-		case Qt::Key_Up:
-			score = board.Up();
-			event->accept();
-			break;
-		case Qt::Key_Right:
-			score = board.Right();
-			event->accept();
-			break;
-		case Qt::Key_Down:
-			score = board.Down();
-			event->accept();
-			break;
-		default:
-			QWidget::keyPressEvent(event);
-	}
+	int score = board.Apply(move);
 	if (score >= 0)
 	{
 		totalScore += score;
 		board.AddRandom();
 		DisplayBoard();
 	}
+}
+
+
+
+int GameButtonGrid::GetTotalScore() const
+{
+	return totalScore;
 }
 
 

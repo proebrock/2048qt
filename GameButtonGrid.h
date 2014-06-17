@@ -12,19 +12,20 @@
 class GameButtonGrid : public QWidget
 {
 	Q_OBJECT
-	
+
 	public:
-	
+
 		explicit GameButtonGrid(QWidget *parent = NULL);
+
 		void NewGame();
-		
+		void ApplyMove(Board::Move move);
+		int GetTotalScore() const;
+
 	signals:
 
 	public slots:
 
 	protected:
-	
-		virtual void keyPressEvent(QKeyEvent *event);
 
 	private:
 

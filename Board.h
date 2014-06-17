@@ -25,16 +25,23 @@ class Board
 		Board(board_t mask);
 		~Board();
 
+		void Clear();
+
 		unsigned int GetField(unsigned int index) const;
 		void SetField(unsigned int index, unsigned int value);
 		row_t GetRow(unsigned int index) const;
 		void SetRow(unsigned int index, row_t value);
 
 		void Transpose();
-		int Left();
-		int Up();
-		int Right();
-		int Down();
+		enum Move
+		{
+			Left = 0,
+			Up,
+			Right,
+			Down,
+			NumMoves
+		};
+		int Apply(Move move);
 
 		unsigned int NumEmptyFields() const;
 		unsigned int GetEmptyFields(unsigned int *fieldIndices) const;

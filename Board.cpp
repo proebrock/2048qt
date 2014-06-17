@@ -47,6 +47,13 @@ Board::~Board()
 
 
 
+void Board::Clear()
+{
+	mask = 0;
+}
+
+
+
 unsigned int Board::GetField(unsigned int index) const
 {
 	return (mask >> (BitsPerField * index)) & FieldMask;
@@ -90,74 +97,51 @@ void Board::Transpose()
 
 
 
-int Board::Left()
+int Board::Apply(Move move)
 {
 	board_t oldmask = mask;
 	int totalScore = 0;
-	for (unsigned int i = 0; i < NumRows; i++)
+	switch (move)
 	{
-		row_t row = GetRow(i);
-		SetRow(i, lookupTableLeft[row]);
-		totalScore += scores[row];
+		case Left:
+			for (unsigned int i = 0; i < NumRows; i++)
+			{
+				row_t row = GetRow(i);
+				SetRow(i, lookupTableLeft[row]);
+				totalScore += scores[row];
+			}
+			break;
+		case Up:
+			Transpose();
+			for (unsigned int i = 0; i < NumRows; i++)
+			{
+				row_t row = GetRow(i);
+				SetRow(i, lookupTableLeft[row]);
+				totalScore += scores[row];
+			}
+			Transpose();
+			break;
+		case Right:
+			for (unsigned int i = 0; i < NumRows; i++)
+			{
+				row_t row = GetRow(i);
+				SetRow(i, lookupTableRight[row]);
+				totalScore += scores[row];
+			}
+			break;
+		case Down:
+			Transpose();
+			for (unsigned int i = 0; i < NumRows; i++)
+			{
+				row_t row = GetRow(i);
+				SetRow(i, lookupTableRight[row]);
+				totalScore += scores[row];
+			}
+			Transpose();
+			break;
+		default:
+			return -1;
 	}
-	if (oldmask == mask)
-		return -1;
-	else
-		return totalScore;
-}
-
-
-
-int Board::Up()
-{
-	board_t oldmask = mask;
-	int totalScore = 0;
-	Transpose();
-	for (unsigned int i = 0; i < NumRows; i++)
-	{
-		row_t row = GetRow(i);
-		SetRow(i, lookupTableLeft[row]);
-		totalScore += scores[row];
-	}
-	Transpose();
-	if (oldmask == mask)
-		return -1;
-	else
-		return totalScore;
-}
-
-
-
-int Board::Right()
-{
-	board_t oldmask = mask;
-	int totalScore = 0;
-	for (unsigned int i = 0; i < NumRows; i++)
-	{
-		row_t row = GetRow(i);
-		SetRow(i, lookupTableRight[row]);
-		totalScore += scores[row];
-	}
-	if (oldmask == mask)
-		return -1;
-	else
-		return totalScore;
-}
-
-
-
-int Board::Down()
-{
-	board_t oldmask = mask;
-	int totalScore = 0;
-	Transpose();
-	for (unsigned int i = 0; i < NumRows; i++)
-	{
-		row_t row = GetRow(i);
-		SetRow(i, lookupTableRight[row]);
-		totalScore += scores[row];
-	}
-	Transpose();
 	if (oldmask == mask)
 		return -1;
 	else

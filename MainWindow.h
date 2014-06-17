@@ -4,6 +4,7 @@
 
 
 #include <QWidget>
+#include <QLineEdit>
 #include <QTimer>
 #include "GameButtonGrid.h"
 
@@ -12,18 +13,22 @@
 class MainWindow : public QWidget
 {
 	Q_OBJECT
-	
+
 	public:
-	
+
 		explicit MainWindow(QWidget *parent = NULL);
 
 	signals:
 
 	public slots:
 
+		void handleNewGameButton();
+		void handleSolveButton();
 		void resizeTimeout();
 
 	protected:
+
+		virtual void keyPressEvent(QKeyEvent *event);
 
 		// Special functionality to avoid frequent calls to the resize
 		// event; due to the fact that the automatic game button font size
@@ -36,10 +41,12 @@ class MainWindow : public QWidget
 	private:
 
 		GameButtonGrid *grid;
+		QLineEdit *scoreEdit;
+		QPushButton *newGameButton;
+		QPushButton *solveButton;
 
 };
 
 
 
 #endif // _MAINWINDOW_H_
-
