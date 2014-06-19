@@ -18,11 +18,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	QHBoxLayout *layout = new QHBoxLayout();
 	scoreEdit = new QLineEdit("0");
+	scoreEdit->setReadOnly(true);
+	scoreEdit->setFocusPolicy(Qt::NoFocus);
+	scoreEdit->setContextMenuPolicy(Qt::PreventContextMenu);
 	layout->addWidget(scoreEdit);
 	newGameButton = new QPushButton("New");
+	newGameButton->setFocusPolicy(Qt::NoFocus);
 	connect(newGameButton, SIGNAL(released()), this, SLOT(handleNewGameButton()));
 	layout->addWidget(newGameButton);
 	solveButton = new QPushButton("Solve");
+	solveButton->setFocusPolicy(Qt::NoFocus);
 	connect(solveButton, SIGNAL(released()), this, SLOT(handleSolveButton()));
 	layout->addWidget(solveButton);
 
