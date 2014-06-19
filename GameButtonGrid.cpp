@@ -15,9 +15,9 @@ GameButtonGrid::GameButtonGrid(QWidget *parent) :
 	layout->setSpacing(12);
 	setLayout(layout);
 
-	for (unsigned int r = 0, i = 0; r < Board::NumRows; r++)
+	for (Board::index_t r = 0, i = 0; r < Board::NumRows; r++)
 	{
-		for (unsigned int c = 0; c < Board::NumCols; c++)
+		for (Board::index_t c = 0; c < Board::NumCols; c++)
 		{
 			buttons[i] = new GameButton();
 			buttons[i]->setSizePolicy(QSizePolicy::Expanding,
@@ -45,7 +45,7 @@ void GameButtonGrid::NewGame()
 
 void GameButtonGrid::ApplyMove(Board::Move move)
 {
-	int score = board.Apply(move);
+	Board::score_t score = board.Apply(move);
 	if (score >= 0)
 	{
 		totalScore += score;
@@ -56,7 +56,7 @@ void GameButtonGrid::ApplyMove(Board::Move move)
 
 
 
-int GameButtonGrid::GetTotalScore() const
+Board::score_t GameButtonGrid::GetTotalScore() const
 {
 	return totalScore;
 }
@@ -65,6 +65,6 @@ int GameButtonGrid::GetTotalScore() const
 
 void GameButtonGrid::DisplayBoard()
 {
-	for (unsigned int i = 0; i < Board::NumFields; i++)
+	for (Board::index_t i = 0; i < Board::NumFields; i++)
 		buttons[Board::NumFields - i - 1]->Set(board.GetField(i));
 }

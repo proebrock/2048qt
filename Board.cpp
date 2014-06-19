@@ -4,7 +4,7 @@
 
 Board::row_t *Board::lookupTableLeft = (Board::row_t *)0;
 Board::row_t *Board::lookupTableRight = (Board::row_t *)0;
-int *Board::scores = (int *)0;
+Board::score_t *Board::scores = (Board::score_t *)0;
 
 
 
@@ -19,15 +19,15 @@ Board::Board(board_t mask)
 	unsigned int n = 1 << BitsPerRow;
 	this->mask = mask;
 
-	if (lookupTableLeft == (Board::row_t *)0)
+	if (lookupTableLeft == (row_t *)0)
 	{
 		lookupTableLeft = new row_t[n];
-		scores = new int[n];
+		scores = new score_t[n];
 		for (unsigned int i = 0; i < n; i++)
-			lookupTableLeft[i] = MoveRow((Board::row_t)i, false, &(scores[i]));
+			lookupTableLeft[i] = MoveRow((row_t)i, false, &(scores[i]));
 		lookupTableRight = new row_t[n];
 		for (unsigned int i = 0; i < n; i++)
-			lookupTableRight[i] = MoveRow((Board::row_t)i, true, (int *)0);
+			lookupTableRight[i] = MoveRow((row_t)i, true, (score_t *)0);
 	}
 }
 
@@ -35,12 +35,9 @@ Board::Board(board_t mask)
 
 Board::~Board()
 {
-	if (lookupTableLeft != (Board::row_t *)0)
+	if (lookupTableLeft != (row_t *)0)
 	{
 		delete [] lookupTableLeft;
-	}
-	if (lookupTableRight != (Board::row_t *)0)
-	{
 		delete [] lookupTableRight;
 	}
 }
@@ -54,14 +51,14 @@ void Board::Clear()
 
 
 
-unsigned int Board::GetField(unsigned int index) const
+Board::field_t Board::GetField(Board::index_t index) const
 {
 	return (mask >> (BitsPerField * index)) & FieldMask;
 }
 
 
 
-void Board::SetField(unsigned int index, unsigned int value)
+void Board::SetField(Board::index_t index, Board::field_t value)
 {
 	mask &= ~((board_t)(FieldMask) << (BitsPerField * index));
 	mask |= ((board_t)(value & FieldMask) << (BitsPerField * index));
@@ -69,14 +66,14 @@ void Board::SetField(unsigned int index, unsigned int value)
 
 
 
-Board::row_t Board::GetRow(unsigned int index) const
+Board::row_t Board::GetRow(Board::index_t index) const
 {
 	return ((row_t *)&mask)[NumRows - index - 1];
 }
 
 
 
-void Board::SetRow(unsigned int index, Board::row_t value)
+void Board::SetRow(Board::index_t index, Board::row_t value)
 {
 	((row_t *)&mask)[NumRows - index - 1] = value;
 }
@@ -97,14 +94,14 @@ void Board::Transpose()
 
 
 
-int Board::Apply(Move move)
+Board::score_t Board::Apply(Move move)
 {
 	board_t oldmask = mask;
-	int totalScore = 0;
+	score_t totalScore = 0;
 	switch (move)
 	{
 		case Left:
-			for (unsigned int i = 0; i < NumRows; i++)
+			for (index_t i = 0; i < NumRows; i++)
 			{
 				row_t row = GetRow(i);
 				SetRow(i, lookupTableLeft[row]);
@@ -113,7 +110,7 @@ int Board::Apply(Move move)
 			break;
 		case Up:
 			Transpose();
-			for (unsigned int i = 0; i < NumRows; i++)
+			for (index_t i = 0; i < NumRows; i++)
 			{
 				row_t row = GetRow(i);
 				SetRow(i, lookupTableLeft[row]);
@@ -122,7 +119,7 @@ int Board::Apply(Move move)
 			Transpose();
 			break;
 		case Right:
-			for (unsigned int i = 0; i < NumRows; i++)
+			for (index_t i = 0; i < NumRows; i++)
 			{
 				row_t row = GetRow(i);
 				SetRow(i, lookupTableRight[row]);
@@ -131,7 +128,7 @@ int Board::Apply(Move move)
 			break;
 		case Down:
 			Transpose();
-			for (unsigned int i = 0; i < NumRows; i++)
+			for (index_t i = 0; i < NumRows; i++)
 			{
 				row_t row = GetRow(i);
 				SetRow(i, lookupTableRight[row]);
@@ -150,10 +147,10 @@ int Board::Apply(Move move)
 
 
 
-unsigned int Board::NumEmptyFields() const
+Board::index_t Board::NumEmptyFields() const
 {
-	unsigned int result = 0;
-	for (unsigned int i = 0; i < NumFields; i++)
+	index_t result = 0;
+	for (index_t i = 0; i < NumFields; i++)
 		if (GetField(i) == 0)
 			result++;
 	return result;
@@ -161,10 +158,10 @@ unsigned int Board::NumEmptyFields() const
 
 
 
-unsigned int Board::GetEmptyFields(unsigned int *fieldIndices) const
+Board::index_t Board::GetEmptyFields(Board::index_t *fieldIndices) const
 {
-	unsigned int result = 0;
-	for (unsigned int i = 0; i < NumFields; i++)
+	index_t result = 0;
+	for (index_t i = 0; i < NumFields; i++)
 		if (GetField(i) == 0)
 			fieldIndices[result++] = i;
 	return result;
@@ -172,37 +169,34 @@ unsigned int Board::GetEmptyFields(unsigned int *fieldIndices) const
 
 
 
-bool Board::AddRandom()
+void Board::AddRandom()
 {
-	unsigned int fieldIndices[NumFields];
-	unsigned int numEmpty = GetEmptyFields(fieldIndices);
-	if (numEmpty == 0)
-		return false;
+	index_t fieldIndices[NumFields];
+	index_t numEmpty = GetEmptyFields(fieldIndices);
 	SetField(fieldIndices[rand() % numEmpty], rand() % 100 >= 90 ? 2 : 1);
-	return true;
 }
 
 
 
-Board::row_t Board::MoveRow(Board::row_t value, bool moveRight, int *score)
+Board::row_t Board::MoveRow(Board::row_t value, bool moveRight, Board::score_t *score)
 {
 	// Initialize score
-	if (score != (int *)0)
+	if (score != (score_t *)0)
 		*score = 0;
 	// Move values from bit field into array for easier access
-	unsigned int input[NumCols];
-	unsigned int in = 0;
+	field_t input[NumCols];
+	row_t in = 0;
 	if (moveRight)
-		for (unsigned int i = 0; i < NumCols; i++)
+		for (index_t i = 0; i < NumCols; i++)
 			input[i] = (value >> (BitsPerField * i)) & FieldMask;
 	else
-		for (unsigned int i = 0; i < NumCols; i++)
+		for (index_t i = 0; i < NumCols; i++)
 			input[NumCols - i - 1] = (value >> (BitsPerField * i)) & FieldMask;
 	// Prepare output array
-	unsigned int output[NumCols];
-	unsigned int out = 0;
+	field_t output[NumCols];
+	row_t out = 0;
 	bool combinePossible = false;
-	for (unsigned int i = 0; i < NumCols; i++)
+	for (index_t i = 0; i < NumCols; i++)
 		output[i] = 0;
 	while (true)
 	{
@@ -225,7 +219,7 @@ Board::row_t Board::MoveRow(Board::row_t value, bool moveRight, int *score)
 			combinePossible = false;
 			in++;
 			// Update score
-			if (score != (int *)0)
+			if (score != (score_t *)0)
 				*score += 1 << output[out-1];
 		}
 		else
@@ -238,12 +232,12 @@ Board::row_t Board::MoveRow(Board::row_t value, bool moveRight, int *score)
 
 done:
 	// Move back result from array into bit field
-	Board::row_t result = 0;
+	row_t result = 0;
 	if (moveRight)
-		for (unsigned int i = 0; i < NumCols; i++)
-			result |= (Board::row_t)(output[i] << (BitsPerField * i));
+		for (index_t i = 0; i < NumCols; i++)
+			result |= (row_t)(output[i] << (BitsPerField * i));
 	else
-		for (unsigned int i = 0; i < NumCols; i++)
-			result |= (Board::row_t)(output[NumCols - i - 1] << (BitsPerField * i));
+		for (index_t i = 0; i < NumCols; i++)
+			result |= (row_t)(output[NumCols - i - 1] << (BitsPerField * i));
 	return result;
 }

@@ -19,7 +19,7 @@ class GameButtonGrid : public QWidget
 
 		void NewGame();
 		void ApplyMove(Board::Move move);
-		int GetTotalScore() const;
+		Board::score_t GetTotalScore() const;
 
 	signals:
 
@@ -31,7 +31,7 @@ class GameButtonGrid : public QWidget
 
 		void DisplayBoard();
 
-		int totalScore;
+		Board::score_t totalScore;
 		Board board;
 		GameButton *buttons[Board::NumFields];
 };
