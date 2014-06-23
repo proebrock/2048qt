@@ -46,7 +46,7 @@ void GameButtonGrid::NewGame()
 void GameButtonGrid::ApplyMove(Board::Move move)
 {
 	Board::score_t score = board.Apply(move);
-	if (score >= 0)
+	if (score > Board:: MoveImpossibleScore)
 	{
 		totalScore += score;
 		board.AddRandom();

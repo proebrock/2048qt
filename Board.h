@@ -13,9 +13,13 @@ class Board
 
 		typedef unsigned char index_t;
 		typedef unsigned char field_t;
+		static const field_t EmptyField = 0;
+		static const field_t WinningPiece = 11;	// 2^11 = 2048
 		typedef unsigned short row_t;		// 2 bytes = 16 bit
 		typedef unsigned long long board_t;	// 8 bytes = 64 bit
+		static const board_t EmptyBoard = 0;
 		typedef int score_t;
+		static const score_t MoveImpossibleScore = -1;
 		static const unsigned int BitsPerField = 4;
 		static const unsigned int BitsPerRow = 8 * sizeof(row_t);
 		static const unsigned int FieldMask = ((1 << BitsPerField) - 1);
@@ -44,11 +48,23 @@ class Board
 			Down,
 			NumMoves
 		};
-		score_t Apply(Move move);
+		score_t Apply(Move move, bool dryrun=false);
 
+		index_t NumFieldsWithContent(field_t content) const;
+		index_t FindFieldsWithContent(index_t *fieldIndices, field_t content) const;
 		index_t NumEmptyFields() const;
 		index_t GetEmptyFields(index_t *fieldIndices) const;
+
 		void AddRandom();
+
+		enum GameStatus
+		{
+			Ongoing = 0,
+			Won,
+			Lost,
+			NumGameStatuses
+		};
+		GameStatus GetGameStatus();
 
 	private:
 
@@ -58,7 +74,7 @@ class Board
 		static row_t *lookupTableLeft;
 		static row_t *lookupTableRight;
 		static score_t *scores;
-
+		// Slow move method to fill the lookup tables
 		row_t MoveRow(row_t value, bool moveRight, score_t *score);
 };
 

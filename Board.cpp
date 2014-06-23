@@ -8,7 +8,7 @@ Board::score_t *Board::scores = (Board::score_t *)0;
 
 
 
-Board::Board() : Board(0)
+Board::Board() : Board(EmptyBoard)
 {
 }
 
@@ -46,7 +46,7 @@ Board::~Board()
 
 void Board::Clear()
 {
-	mask = 0;
+	mask = EmptyBoard;
 }
 
 
@@ -94,7 +94,7 @@ void Board::Transpose()
 
 
 
-Board::score_t Board::Apply(Move move)
+Board::score_t Board::Apply(Move move, bool dryrun)
 {
 	board_t oldmask = mask;
 	score_t totalScore = 0;
@@ -137,22 +137,41 @@ Board::score_t Board::Apply(Move move)
 			Transpose();
 			break;
 		default:
-			return -1;
+			return MoveImpossibleScore;
 	}
 	if (oldmask == mask)
-		return -1;
-	else
-		return totalScore;
+		totalScore = MoveImpossibleScore;
+	else if (dryrun)
+		mask = oldmask;
+	return totalScore;
+}
+
+
+
+Board::index_t Board::NumFieldsWithContent(Board::field_t content) const
+{
+	index_t result = 0;
+	for (index_t i = 0; i < NumFields; i++)
+		if (GetField(i) == content)
+			result++;
+	return result;
 }
 
 
 
 Board::index_t Board::NumEmptyFields() const
 {
+	return NumFieldsWithContent(EmptyField);
+}
+
+
+
+Board::index_t Board::FindFieldsWithContent(Board::index_t *fieldIndices, Board::field_t content) const
+{
 	index_t result = 0;
 	for (index_t i = 0; i < NumFields; i++)
-		if (GetField(i) == 0)
-			result++;
+		if (GetField(i) == content)
+			fieldIndices[result++] = i;
 	return result;
 }
 
@@ -160,11 +179,7 @@ Board::index_t Board::NumEmptyFields() const
 
 Board::index_t Board::GetEmptyFields(Board::index_t *fieldIndices) const
 {
-	index_t result = 0;
-	for (index_t i = 0; i < NumFields; i++)
-		if (GetField(i) == 0)
-			fieldIndices[result++] = i;
-	return result;
+	return FindFieldsWithContent(fieldIndices, EmptyField);
 }
 
 
@@ -174,6 +189,22 @@ void Board::AddRandom()
 	index_t fieldIndices[NumFields];
 	index_t numEmpty = GetEmptyFields(fieldIndices);
 	SetField(fieldIndices[rand() % numEmpty], rand() % 100 >= 90 ? 2 : 1);
+}
+
+
+
+Board::GameStatus Board::GetGameStatus()
+{
+	// If there is any winning piece on the board, it is a win
+	for (index_t i = 0; i < NumFields; i++)
+		if (GetField(i) >= WinningPiece)
+			return Won;
+	// If there is any move left, the game is ongoing
+	for (unsigned int i = 0; i < NumMoves; i++)
+		if (Apply((Move)i, true) > MoveImpossibleScore)
+			return Ongoing;
+	// Otherwise it is still ongoing
+	return Lost;
 }
 
 
